@@ -1,10 +1,16 @@
 import Vapor
+import SwiftyJSON
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
     // Basic "It works" example
-    router.get { req in
-        return "It works!"
+    router.get { req -> String in
+        let dict = [
+            "nick_name": "pjhubs",
+            "uid": "2123313",
+        ]
+        let json = JSON(dict)
+        return json.rawString()!
     }
     
     // Basic "Hello, world!" example
