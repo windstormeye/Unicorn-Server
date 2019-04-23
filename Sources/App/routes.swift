@@ -3,7 +3,6 @@ import SwiftyJSON
 
 /// Register your application's routes here.
 public func routes(_ router: Router) throws {
-    // Basic "It works" example
     router.get { req -> String in
         let dict = [
             "nick_name": "pjhubs",
@@ -14,8 +13,18 @@ public func routes(_ router: Router) throws {
     }
     
     // Basic "Hello, world!" example
-    router.get("hello") { req in
-        return "Hello, world!"
+    router.get("hello") { req -> Array<User> in
+        let u1 = User(id: "12345667", nickName: "PJHubs")
+        let u2 = User(id: "12345667", nickName: "PJHubs")
+        return [u1, u2]
+    }
+    
+    router.post("user") { req -> Future<HTTPStatus> in
+        return try req.content.decode(User.self).map(to: HTTPStatus.self) {
+            print($0.id)
+            print($0.nickName)
+            return .ok
+        }
     }
 
     // Example of configuring a controller

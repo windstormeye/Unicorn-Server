@@ -74,6 +74,15 @@
         }
       },
       {
+        "package": "MySQL",
+        "repositoryURL": "https://github.com/vapor/mysql.git",
+        "state": {
+          "branch": null,
+          "revision": "d1561ae722220cafe0ef4b51549f87aebc70ddb1",
+          "version": "3.2.4"
+        }
+      },
+      {
         "package": "Routing",
         "repositoryURL": "https://github.com/vapor/routing.git",
         "state": {
