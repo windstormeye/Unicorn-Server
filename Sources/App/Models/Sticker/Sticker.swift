@@ -5,10 +5,10 @@
 //  Created by PJHubs on 2019/4/24.
 //
 
-import FluentSQLite
+import FluentMySQL
 import Vapor
 
-final class Sticker: SQLiteModel {
+final class Sticker: MySQLModel {
     var id: Int?
     /// x
     var x: Float

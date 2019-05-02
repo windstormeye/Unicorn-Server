@@ -14,7 +14,6 @@ final class StickerController {
 
     /// 返回所有贴纸列表
     func index(_ req: Request) throws -> Future<[Sticker]> {
-//        return Todo.query(on: req).all()
         return Sticker.query(on: req).all()
     }
     
@@ -24,17 +23,12 @@ final class StickerController {
             return $0.save(on: req)
         })
     }
-//    func create(_ req: Request) throws -> Future<Todo> {
-//        return try req.content.decode(Todo.self).flatMap { todo in
-//            return todo.save(on: req)
-//        }
-//    }
-//
-//    /// 删除一个参数化的贴纸
-//    func delete(_ req: Request) throws -> Future<HTTPStatus> {
-//        return try req.parameters.next(Todo.self).flatMap { todo in
-//            return todo.delete(on: req)
-//            }.transform(to: .ok)
-//    }
+
+    /// 删除一个参数化的贴纸
+    func delete(_ req: Request) throws -> Future<HTTPStatus> {
+        return try req.parameters.next(Sticker.self).flatMap { todo in
+            return todo.delete(on: req)
+            }.transform(to: .ok)
+    }
 }
 
