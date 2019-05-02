@@ -45,6 +45,11 @@ extension User {
         let id: Int
         let nickname: String
     }
+    
+    struct Input: Content {
+        let phoneNumber: String
+        let token: String
+    }
 }
 
 extension Future where T: User {

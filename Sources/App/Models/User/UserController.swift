@@ -29,12 +29,15 @@ final class UserController: RouteCollection {
 //        tokenProtected.put(User.parameter, use: update)
 //        tokenProtected.delete(User.parameter, use: delete)
         
+        let userRouter = router.grouped("api", "user")
+        
         let userController = UserController()
         router.post("register", use: userController.register)
         router.post("login", use: userController.login)
         
+        
         let tokenAuthenticationMiddleware = User.tokenAuthMiddleware()
-        let authedRoutes = router.grouped(tokenAuthenticationMiddleware)
+        let authedRoutes = userRouter.grouped(tokenAuthenticationMiddleware)
         authedRoutes.get("profile", use: userController.profile)
 //        authedRoutes.get("logout", use: userController.logout)
     }
@@ -59,7 +62,8 @@ final class UserController: RouteCollection {
     }
     
     func profile(_ req: Request) throws -> Future<User.Public> {
-        return try req.parameters.next(User.self).toPublic()
+        let user = try req.requireAuthenticated(User.self)
+        return req.future(user.toPublic())
     }
     
     func all(_ req: Request) throws -> Future<[User.Public]> {
