@@ -1,5 +1,5 @@
 //
-//  Tokne.swift
+//  Token.swift
 //  App
 //
 //  Created by PJHubs on 2019/5/1.
@@ -37,10 +37,14 @@ extension Token: Migration { }
 extension Token: Content { }
 extension Token: Parameter { }
 
+// 实现 `Authentication.Token` 协议，使 `Token` 成为 `Authentication.Token`
 extension Token: Authentication.Token {
+    // 指定协议中的 `UserType` 为自定义的 `User`
     typealias UserType = User
+    // 置顶协议中的 `UserIDType` 为自定义的 `User.ID`
     typealias UserIDType = User.ID
     
+    // `token` 与 `user` 进行绑定
     static var userIDKey: WritableKeyPath<Token, User.ID> {
         return \Token.userId
     }

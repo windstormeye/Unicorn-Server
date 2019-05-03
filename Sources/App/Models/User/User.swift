@@ -14,15 +14,19 @@ final class User: MySQLModel {
     var phoneNumber: String
     var nickname: String
     var password: String
+    var fluentCreatedAt: Date?
     
     init(id: Int? = nil,
          phoneNumber: String,
          password: String,
-         nickname: String) {
+         nickname: String,
+         fluentCreatedAt: Date? = nil) {
+        
         self.id = id
         self.nickname = nickname
         self.password = password
         self.phoneNumber = phoneNumber
+        self.fluentCreatedAt = fluentCreatedAt
     }
 }
 
@@ -44,11 +48,6 @@ extension User {
     struct Public: Content {
         let id: Int
         let nickname: String
-    }
-    
-    struct Input: Content {
-        let phoneNumber: String
-        let token: String
     }
 }
 

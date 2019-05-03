@@ -1,5 +1,4 @@
 import Vapor
-import SwiftyJSON
 
 public func routes(_ router: Router) throws {
     

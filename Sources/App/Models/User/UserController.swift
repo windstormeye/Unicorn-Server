@@ -6,40 +6,28 @@
 //
 
 import Vapor
-import Crypto
 import Authentication
 
 /// Sticker 增删改查操作控制器
 final class UserController: RouteCollection {
     
     func boot(router: Router) throws {
-//        let usersRoute = router.grouped("api", "user")
-//
-//        let basicAuthMiddleware = User.basicAuthMiddleware(using: BCryptDigest())
-//        let guardAuthMiddleware = User.guardAuthMiddleware()
-//
-//        let basicProtected = usersRoute.grouped(basicAuthMiddleware, guardAuthMiddleware)
-//        basicProtected.post("login", use: login)
-//        basicProtected.post("create", use: create)
-//
-//        let tokenAuthMiddleware = User.tokenAuthMiddleware()
-//        let tokenProtected = usersRoute.grouped(tokenAuthMiddleware, guardAuthMiddleware)
-//        tokenProtected.get(use: all)
-//        tokenProtected.get(User.parameter, use: index)
-//        tokenProtected.put(User.parameter, use: update)
-//        tokenProtected.delete(User.parameter, use: delete)
-        
         let userRouter = router.grouped("api", "user")
         
+        // 正常路由
         let userController = UserController()
         router.post("register", use: userController.register)
         router.post("login", use: userController.login)
         
-        
+        // `tokenAuthMiddleware` 该中间件能够自行寻找当前 `HTTP header` 的 `Authorization` 字段中的值，并取出与该 `token` 对应的 `user`，并把结果缓存到请求缓存中供后续其它方法使用
+        // 需要进行 `token` 鉴权的路由
         let tokenAuthenticationMiddleware = User.tokenAuthMiddleware()
         let authedRoutes = userRouter.grouped(tokenAuthenticationMiddleware)
         authedRoutes.get("profile", use: userController.profile)
-//        authedRoutes.get("logout", use: userController.logout)
+        authedRoutes.get("logout", use: userController.logout)
+        authedRoutes.get("", use: userController.all)
+        authedRoutes.get("delete", use: userController.delete)
+        authedRoutes.get("update", use: userController.update)
     }
 
     func login(_ req: Request) throws -> Future<Token> {
@@ -59,6 +47,15 @@ final class UserController: RouteCollection {
                 }
             }
         }
+    }
+    
+    func logout(_ req: Request) throws -> Future<HTTPResponse> {
+        let user = try req.requireAuthenticated(User.self)
+        return try Token
+            .query(on: req)
+            .filter(\Token.userId, .equal, user.requireID())
+            .delete()
+            .transform(to: HTTPResponse(status: .ok))
     }
     
     func profile(_ req: Request) throws -> Future<User.Public> {

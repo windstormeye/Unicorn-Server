@@ -3,7 +3,13 @@ import FluentMySQL
 import Authentication
 
 /// 应用初始化完会被调用
-public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
+public func configure(_ config: inout Config,
+                      _ env: inout Environment,
+                      _ services: inout Services) throws {
+    var commands = CommandConfig.default()
+    commands.useFluentCommands()
+    services.register(commands)
+    
     // 数据库
     try services.register(FluentMySQLProvider())
     // 权限认证
@@ -33,6 +39,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(model: Sticker.self, database: .mysql)
     migrations.add(model: User.self, database: .mysql)
     migrations.add(model: Token.self, database: .mysql)
+    
+    migrations.add(migration: AddUserMss.self, database: .mysql)
     
     services.register(migrations)
 }
