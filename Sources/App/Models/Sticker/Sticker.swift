@@ -22,16 +22,19 @@ final class Sticker: MySQLModel {
     var type: StickerType
     /// 贴纸内容。
     var content: String
+    /// 所属 book
+    var bookId: Int
 
     
     /// 创建一个新的贴纸.
-    init(id: Int? = nil, x: Float, y: Float, w: Float, h: Float, type: StickerType, content: String) {
+    init(id: Int? = nil, x: Float, y: Float, w: Float, h: Float, type: StickerType, content: String, bookId: Int) {
         self.id = id
         self.x = x
         self.y = y
         self.w = w
         self.h = h
         self.type = type
+        self.bookId = bookId
         self.content = content
     }
 }
