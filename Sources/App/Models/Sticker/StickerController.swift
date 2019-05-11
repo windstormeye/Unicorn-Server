@@ -21,6 +21,7 @@ final class StickerController: RouteCollection {
         authedRoutes.get("", use: stickerController.index)
         authedRoutes.delete("", use: stickerController.delete)
         authedRoutes.post("update", use: stickerController.update)
+        authedRoutes.post("upload", use: stickerController.uploadSticker)
     }
     
     /// 返回所有贴纸列表
@@ -55,15 +56,45 @@ final class StickerController: RouteCollection {
             let sticker = Sticker.find(updateSticker.id!, on: req)
             return sticker.flatMap({
                 if $0 != nil {
-                    $0!.x = updateSticker.x
-                    $0!.y = updateSticker.y
-                    $0!.w = updateSticker.w
-                    $0!.h = updateSticker.h
+                    $0!.link = updateSticker.link
                 }
                 let _ = $0!.update(on: req)
                 return req.future(HTTPStatus.ok)
             })
         })
     }
+    
+    func uploadSticker(_ req: Request) throws -> Future<HTTPStatus> {
+        print("uploadUserImage")
+        let directory = DirectoryConfig.detect()
+        let workPath = directory.workDir
+        
+        let name = UUID().uuidString + ".png"
+        let imageFolder = "Public/images"
+        let saveURL = URL(fileURLWithPath: workPath).appendingPathComponent(imageFolder, isDirectory: true).appendingPathComponent(name, isDirectory: false)
+        
+        return try req.content.decode(FileContent.self).map { payload in
+            try payload.file.data.write(to: saveURL)
+            let bookId = try req.query.get(Int.self, at: ["bookId"])
+            
+            _ = Sticker.query(on: req).filter(\.bookId, .equal, bookId).first().flatMap({ (sticker) -> EventLoopFuture<HTTPStatus> in
+                if sticker != nil {
+                    sticker!.link = saveURL.absoluteString
+                    _ = sticker!.save(on: req)
+                } else {
+                    let sticker = Sticker(bookId: bookId,
+                                          link: saveURL.absoluteString)
+                    let _ = sticker.save(on: req)
+                }
+                return req.future(.ok)
+            })
+        
+            return .ok
+        }
+    }
+}
+
+struct FileContent: Content {
+    var file: File
 }
 
