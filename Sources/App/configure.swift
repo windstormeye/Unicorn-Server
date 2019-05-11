@@ -40,5 +40,6 @@ public func configure(_ config: inout Config,
     migrations.add(model: User.self, database: .mysql)
     migrations.add(model: Token.self, database: .mysql)
     migrations.add(model: Note.self, database: .mysql)
+    migrations.add(migration: StickerMigrations0511.self, database: .mysql)
     services.register(migrations)
 }

@@ -9,11 +9,25 @@ import Vapor
 import MySQL
 
 
-/// Sticker 增删改查操作控制器
-final class NoteController {
+final class NoteController: RouteCollection {
+    
+    func boot(router: Router) throws {
+        let noteRouter = router.grouped("api", "note")
+        let noteController = NoteController()
+    
+        let tokenAuthenticationMiddleware = User.tokenAuthMiddleware()
+        let authedRoutes = noteRouter.grouped(tokenAuthenticationMiddleware)
+        authedRoutes.post("", use: noteController.create)
+        authedRoutes.get("", use: noteController.index)
+        authedRoutes.delete("", use: noteController.delete)
+    }
     
     func index(_ req: Request) throws -> Future<[Note]> {
-        return Note.query(on: req).all()
+        guard let userId = req.query[Int.self, at: "userId"] else {
+            throw Abort(.badRequest)
+        }
+        
+        return Note.query(on: req).filter(\.userId, ._equal, userId).all()
     }
 
     func create(_ req: Request) throws -> Future<Note> {

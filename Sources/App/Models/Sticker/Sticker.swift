@@ -18,33 +18,40 @@ final class Sticker: MySQLModel {
     var w: Float
     /// height
     var h: Float
+    /// 旋转
+    var rotate: Float
     /// 贴纸类型
     var type: StickerType
-    /// 贴纸内容。
-    var content: String
+    /// 自定义贴纸类型的二进制数据
+    var data: Data?
+    /// 默认贴纸类型的索引
+    var defaultIndex: Int?
     /// 所属 book
     var bookId: Int
 
     
     /// 创建一个新的贴纸.
-    init(id: Int? = nil, x: Float, y: Float, w: Float, h: Float, type: StickerType, content: String, bookId: Int) {
+    init(id: Int? = nil, x: Float, y: Float, w: Float, h: Float, type: StickerType, bookId: Int, defaultIndex: Int? = nil, data: Data? = nil, rotate: Float) {
         self.id = id
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        self.data = data
         self.type = type
+        self.rotate = rotate
         self.bookId = bookId
-        self.content = content
+        self.defaultIndex = defaultIndex
     }
 }
 
 extension Sticker {
     /// 贴纸类型
     enum StickerType: Int, Codable {
-        case image = 0
-        case icon
-        case text
+        // 自带贴纸
+        case `default` = 0
+        // 自定义
+        case custom
     }
 }
 

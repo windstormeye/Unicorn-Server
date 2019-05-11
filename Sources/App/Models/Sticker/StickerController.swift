@@ -9,16 +9,35 @@ import Vapor
 import MySQL
 
 
-/// Sticker 增删改查操作控制器
-final class StickerController {
+final class StickerController: RouteCollection {
 
+    func boot(router: Router) throws {
+        let noteRouter = router.grouped("api", "sticker")
+        let stickerController = StickerController()
+        
+        let tokenAuthenticationMiddleware = User.tokenAuthMiddleware()
+        let authedRoutes = noteRouter.grouped(tokenAuthenticationMiddleware)
+        authedRoutes.post("", use: stickerController.create)
+        authedRoutes.get("", use: stickerController.index)
+        authedRoutes.delete("", use: stickerController.delete)
+        authedRoutes.post("update", use: stickerController.update)
+    }
+    
     /// 返回所有贴纸列表
     func index(_ req: Request) throws -> Future<[Sticker]> {
-        return Sticker.query(on: req).all()
+        guard let bookId = req.query[Int.self, at: "bookId"] else {
+            throw Abort(.badRequest)
+        }
+        
+        return Sticker.query(on: req).filter(\.bookId, ._equal, bookId).all()
     }
     
     /// 保存一个编码完的贴纸入库
     func create(_ req: Request) throws -> Future<Sticker> {
+//        guard let stickers = req.query[Array<Sticker>.self, at: "stickers"] else {
+//            throw Abort(.badRequest)
+//        }
+        
         return try req.content.decode(Sticker.self).flatMap({
             return $0.save(on: req)
         })
@@ -29,6 +48,22 @@ final class StickerController {
         return try req.parameters.next(Sticker.self).flatMap { todo in
             return todo.delete(on: req)
             }.transform(to: .ok)
+    }
+    
+    func update(_ req: Request) throws -> Future<HTTPStatus> {
+        return try req.content.decode(Sticker.self).flatMap({ updateSticker in
+            let sticker = Sticker.find(updateSticker.id!, on: req)
+            return sticker.flatMap({
+                if $0 != nil {
+                    $0!.x = updateSticker.x
+                    $0!.y = updateSticker.y
+                    $0!.w = updateSticker.w
+                    $0!.h = updateSticker.h
+                }
+                let _ = $0!.update(on: req)
+                return req.future(HTTPStatus.ok)
+            })
+        })
     }
 }
 

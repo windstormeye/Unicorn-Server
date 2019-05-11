@@ -5,8 +5,10 @@
 //  Created by PJHubs on 2019/5/10.
 //
 
-import FluentMySQL
 import Vapor
+import FluentMySQL
+import Authentication
+
 
 final class Note: MySQLModel {
     var id: Int?
