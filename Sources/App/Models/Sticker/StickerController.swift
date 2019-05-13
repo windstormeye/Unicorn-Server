@@ -2,7 +2,7 @@
 //  StickerController.swift
 //  App
 //
-//  Created by PJHubs on 2019/4/24.
+//  Created by YiYi on 2019/4/24.
 //
 
 import Vapor
@@ -86,6 +86,7 @@ final class StickerController: RouteCollection {
                                           link: saveURL.absoluteString)
                     let _ = sticker.save(on: req)
                 }
+                // TODO: 有问题，应该在 `flatMap` 内处理完数据后返回
                 return req.future(.ok)
             })
         

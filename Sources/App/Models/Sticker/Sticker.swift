@@ -2,7 +2,7 @@
 //  Sticker.swift
 //  App
 //
-//  Created by PJHubs on 2019/4/24.
+//  Created by YiYi on 2019/4/24.
 //
 
 import FluentMySQL
