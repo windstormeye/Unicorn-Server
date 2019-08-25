@@ -2,7 +2,7 @@
 //  User.swift
 //  App
 //
-//  Created by YiYi on 2019/4/23.
+//  Created by PJHubs on 2019/4/23.
 //
 
 import Vapor
