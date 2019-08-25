@@ -27,7 +27,7 @@ public func configure(_ config: inout Config,
     middlewares.use(ErrorMiddleware.self)
     services.register(middlewares)
     // 配置 MySQL 数据库
-    let mysql = MySQLDatabase(config: MySQLDatabaseConfig(hostname: "localhost", port: 3306, username: "unicorn", password: "unicorn_2019", database: "unicorn_db", capabilities: .default, characterSet: .utf8mb4_unicode_ci, transport: .unverifiedTLS))
+    let mysql = MySQLDatabase(config: MySQLDatabaseConfig(hostname: "localhost", port: 3306, username: "root", password: "19970522yifan", database: "unicorn_db", capabilities: .default, characterSet: .utf8mb4_unicode_ci, transport: .unverifiedTLS))
 
     // 注册 SQLite 数据库配置文件到数据库配置中心
     var databases = DatabasesConfig()

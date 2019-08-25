@@ -29,12 +29,16 @@ extension Token {
     }
 }
 
+// Bearer验证
 extension Token: BearerAuthenticatable {
     static var tokenKey: WritableKeyPath<Token, String> { return \Token.token }
 }
 
+// 实现数据库操作。如增加表字段，更新表结构
 extension Token: Migration { }
+// 允许从 HTTP 消息中编解码出对应数据
 extension Token: Content { }
+// 允许使用动态的使用在路由中定义的参数
 extension Token: Parameter { }
 
 // 实现 `Authentication.Token` 协议，使 `Token` 成为 `Authentication.Token`
@@ -50,9 +54,11 @@ extension Token: Authentication.Token {
     }
 }
 
+// 生成 random随机数
 extension Token {
     static func generate(for user: User) throws -> Token {
         let random = try CryptoRandom().generateData(count: 16)
+        // random生成16位随机字符串
         return try Token(token: random.base64EncodedString(), userId: user.requireID())
     }
 }
