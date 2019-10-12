@@ -18,7 +18,8 @@ final class UserController: RouteCollection {
         
         // 正常路由。初始化需要用到的控制器。
         let userController = UserController()
-        // 例如：此处就为 http://localhost:8080/api/user/register。浏览器就会访问registerd方法
+        // 例如：此处就为 http://localhost:8080/api/user/register
+        // 例如：此处就为 http://localhost:8080/register，实际访问是这个
         router.post("register", use: userController.register) //访问register用户注册方法
         router.post("login", use: userController.login) //访问登录方法
         
